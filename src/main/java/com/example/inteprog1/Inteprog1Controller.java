@@ -1,5 +1,6 @@
 package com.example.inteprog1;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -11,9 +12,15 @@ import com.twilio.type.PhoneNumber;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @Controller
 public class Inteprog1Controller {
+	@Autowired
+	private StudentRepository studentRepository;
     @GetMapping("/hello")
 	public String hello(@RequestParam(value="name") String name) {
 		return String.format("Hello World");
@@ -35,5 +42,40 @@ public class Inteprog1Controller {
 		"Hi Jhondrei, Ako si Kuya Will ng Wil to Win at nanalo ka ng 1 Million pesos!").create();
 		return new ResponseEntity<>("SMS Sent", HttpStatus.OK);
 	}
+
+
+	@GetMapping("/getStudents")
+	public @ResponseBody Iterable<Student> getStudents() {
+		return studentRepository.findAll();
+	}
+
+	@PostMapping("/addStudent")
+	public @ResponseBody String addStudent(@RequestBody Student student) {
+		//TODO: process POST request
+		Student stud = new Student();
+		stud.setStud_name(student.getStud_name());
+		stud.setAge(student.getAge());
+		stud.setCourse(student.getCourse());	
+		studentRepository.save(stud);
+		return "Student added successfully!";
+	}
+
+	@PostMapping("/editStudent")
+	public @ResponseBody String editStudent(@RequestBody Student student) {
+		//TODO: process POST request
+		Student stud = studentRepository.findById(student.getStud_id()).orElse(null);
+		if (stud != null) {
+			stud.setStud_name(student.getStud_name());
+			stud.setAge(student.getAge());
+			stud.setCourse(student.getCourse());	
+			studentRepository.save(stud);
+			return "Student updated successfully!";
+		} else {
+			return "Student not found!";
+		}
+	}
+	
+	
+	
 
 }
