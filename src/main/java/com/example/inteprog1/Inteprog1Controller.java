@@ -48,6 +48,10 @@ public class Inteprog1Controller {
 	public @ResponseBody Iterable<Student> getStudents() {
 		return studentRepository.findAll();
 	}
+	@GetMapping("/getStudentById")
+	public @ResponseBody Student getStudentById(@RequestParam(value="id") Long id) {
+		return studentRepository.findById(id).orElse(null);
+	}
 
 	@PostMapping("/addStudent")
 	public @ResponseBody String addStudent(@RequestBody Student student) {
